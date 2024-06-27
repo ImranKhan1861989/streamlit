@@ -9,7 +9,7 @@
 
 # In[ ]:
 
-pip install -U scikit-learn
+pip install -U sklearn
 import sklearn
 import pandas as pd
 import numpy as np

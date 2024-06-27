@@ -4,14 +4,7 @@
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-git clone https://github.com/scikit-learn/scikit-learn.git
-cd scikit-learn
-pip install .
+get_ipython().system('pip install sklearn')
 import sklearn
 import pandas as pd
 import numpy as np
@@ -100,10 +93,4 @@ if st.sidebar.button('Predict Birthday'):
     predicted_month, predicted_day = predict_birthday(user_age, relationship_status, education_level, num_friends, posts_last_month, comments_last_month, likes_last_month)
     st.write(f"Predicted birthday month: {predicted_month}")
     st.write(f"Predicted birthday day: {predicted_day}")
-
-
-# In[ ]:
-
-
-
 

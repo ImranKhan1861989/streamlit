@@ -1,0 +1,75 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+import streamlit as st  # Assuming we use Streamlit for the UI
+
+# Generate synthetic data
+np.random.seed(0)
+
+# Example dataset with synthetic profile and activity data
+data = {
+    'user_id': np.arange(1, 1001),  # Example user IDs
+    'age': np.random.randint(18, 65, 1000),  # Random ages between 18 and 64
+    'relationship_status': np.random.choice(['Single', 'In a relationship', 'Married'], 1000),
+    'education_level': np.random.choice(['High school', 'College', 'Graduate'], 1000),
+    'num_friends': np.random.randint(0, 500, 1000),  # Number of friends
+    'posts_last_month': np.random.randint(0, 50, 1000),  # Number of posts last month
+    'comments_last_month': np.random.randint(0, 100, 1000),  # Number of comments last month
+    'likes_last_month': np.random.randint(0, 200, 1000),  # Number of likes last month
+    'birthday_month': np.random.randint(1, 13, 1000),  # Synthetic birthday month
+    'birthday_day': np.random.randint(1, 32, 1000),  # Synthetic birthday day
+}
+
+df = pd.DataFrame(data)
+
+# Additional feature engineering (synthetic examples)
+# Generate some additional synthetic features for demonstration
+# These would typically be derived from more detailed data sources in real scenarios
+df['friend_interaction_score'] = df['num_friends'] + df['likes_last_month'] + df['comments_last_month']
+df['high_activity_period'] = np.where((df['posts_last_month'] > 30) | (df['comments_last_month'] > 50), 1, 0)
+
+# Convert categorical variables to numeric using one-hot encoding
+df = pd.get_dummies(df, columns=['relationship_status', 'education_level'])
+
+# Define features and targets
+X = df.drop(['user_id', 'birthday_month', 'birthday_day'], axis=1)
+y_month = df['birthday_month']
+y_day = df['birthday_day']
+
+# Train Random Forest models for month and day prediction
+X_train_month, X_test_month, y_train_month, y_test_month = train_test_split(X, y_month, test_size=0.2, random_state=0)
+model_month = RandomForestClassifier(random_state=0)
+model_month.fit(X_train_month, y_train_month)
+
+X_train_day, X_test_day, y_train_day, y_test_day = train_test_split(X, y_day, test_size=0.2, random_state=0)
+model_day = RandomForestClassifier(random_state=0)
+model_day.fit(X_train_day, y_train_day)
+
+# Streamlit UI for birthday prediction
+st.title('Facebook Birthday Estimation')
+
+# User inputs (simulated for demonstration)
+age = st.number_input('Enter age:', min_value=18, max_value=100, value=30)
+relationship_status = st.selectbox('Relationship status:', ['Single', 'In a relationship', 'Married'])
+education_level = st.selectbox('Education level:', ['High school', 'College', 'Graduate'])
+num_friends = st.number_input('Number of friends:', min_value=0, max_value=1000, value=200)
+posts_last_month = st.number_input('Posts last month:', min_value=0, max_value=100, value=20)
+comments_last_month = st.number_input('Comments last month:', min_value=0, max_value=200, value=50)
+likes_last_month = st.number_input('Likes last month:', min_value=0, max_value=500, value=100)
+
+# Predict birthday month and day based on user inputs
+if st.button('Estimate Birthday'):
+    # Prepare input data for prediction
+    user_input = pd.DataFrame({
+        'age': [age],
+        'relationship_status': [relationship_status],
+        'education_level': [education_level],
+        'num_friends': [num_friends],
+        'posts_last_month': [posts_last_month],
+        'comments_last_month': [comments_last_month],
+        'likes_last_month': [likes_last_month],
+    })
+
+    # Convert categorical variables to numeric using one

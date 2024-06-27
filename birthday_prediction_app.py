@@ -7,16 +7,16 @@
 import subprocess
 import sys
 
-# Install sklearn if not already installed
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'scikit-learn'])
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'streamlit'])
+# Install necessary packages
+try:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'numpy', 'pandas', 'scikit-learn', 'streamlit'])
+except subprocess.CalledProcessError as e:
+    print(f"Error installing dependencies: {e}")
+    sys.exit(1)
 
-import sklearn
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 import streamlit as st
 
 # Generate synthetic data
@@ -39,8 +39,6 @@ data = {
 df = pd.DataFrame(data)
 
 # Additional feature engineering (synthetic examples)
-# Generate some additional synthetic features for demonstration
-# These would typically be derived from more detailed data sources in real scenarios
 df['friend_interaction_score'] = df['num_friends'] + df['likes_last_month'] + df['comments_last_month']
 df['high_activity_period'] = np.where((df['posts_last_month'] > 30) | (df['comments_last_month'] > 50), 1, 0)
 
@@ -85,21 +83,24 @@ def predict_birthday(user_age, relationship_status, education_level, num_friends
     return predicted_month[0], predicted_day[0]
 
 # Streamlit UI
-st.title('Birthday Prediction App')
+def main():
+    st.title('Birthday Prediction App')
 
-# User input form
-st.sidebar.header('User Input')
-user_age = st.sidebar.slider('Age', 18, 65, 30)
-relationship_status = st.sidebar.selectbox('Relationship Status', ['Single', 'In a relationship', 'Married'])
-education_level = st.sidebar.selectbox('Education Level', ['High school', 'College', 'Graduate'])
-num_friends = st.sidebar.slider('Number of Friends', 0, 500, 100)
-posts_last_month = st.sidebar.slider('Posts Last Month', 0, 50, 10)
-comments_last_month = st.sidebar.slider('Comments Last Month', 0, 100, 20)
-likes_last_month = st.sidebar.slider('Likes Last Month', 0, 200, 50)
+    # User input form
+    st.sidebar.header('User Input')
+    user_age = st.sidebar.slider('Age', 18, 65, 30)
+    relationship_status = st.sidebar.selectbox('Relationship Status', ['Single', 'In a relationship', 'Married'])
+    education_level = st.sidebar.selectbox('Education Level', ['High school', 'College', 'Graduate'])
+    num_friends = st.sidebar.slider('Number of Friends', 0, 500, 100)
+    posts_last_month = st.sidebar.slider('Posts Last Month', 0, 50, 10)
+    comments_last_month = st.sidebar.slider('Comments Last Month', 0, 100, 20)
+    likes_last_month = st.sidebar.slider('Likes Last Month', 0, 200, 50)
 
-# Action button to predict birthday
-if st.sidebar.button('Predict Birthday'):
-    predicted_month, predicted_day = predict_birthday(user_age, relationship_status, education_level, num_friends, posts_last_month, comments_last_month, likes_last_month)
-    st.write(f"Predicted birthday month: {predicted_month}")
-    st.write(f"Predicted birthday day: {predicted_day}")
+    # Action button to predict birthday
+    if st.sidebar.button('Predict Birthday'):
+        predicted_month, predicted_day = predict_birthday(user_age, relationship_status, education_level, num_friends, posts_last_month, comments_last_month, likes_last_month)
+        st.write(f"Predicted birthday month: {predicted_month}")
+        st.write(f"Predicted birthday day: {predicted_day}")
 
+if __name__ == "__main__":
+    main()

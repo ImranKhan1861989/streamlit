@@ -9,7 +9,7 @@
 
 # In[ ]:
 
-pip install sklearn
+install sklearn
 import sklearn
 import pandas as pd
 import numpy as np

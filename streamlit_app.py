@@ -9,7 +9,9 @@
 
 # In[ ]:
 
-pip install -U scikit-learn
+git clone https://github.com/scikit-learn/scikit-learn.git
+cd scikit-learn
+pip install .
 import sklearn
 import pandas as pd
 import numpy as np
